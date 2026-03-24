@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CalmSpace</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: black;
+            overflow: hidden;
+            font-family: Arial;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+        }
+
+        /* 🌈 Flowing Colors */
+        @keyframes textFlow {
+            0% { color: #d8b4fe; text-shadow: 0 0 10px #a855f7; }
+            25% { color: #fca5a5; text-shadow: 0 0 15px #ef4444; }
+            50% { color: #86efac; text-shadow: 0 0 15px #22c55e; }
+            75% { color: #fde68a; text-shadow: 0 0 20px #facc15; }
+            100% { color: #7dd3fc; text-shadow: 0 0 20px #38bdf8; }
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 60px;
+            animation: textFlow 15s infinite linear;
+            z-index: 2;
+        }
+
+        .panel {
+            display: flex;
+            gap: 30px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            padding: 20px;
+            border-radius: 20px;
+            z-index: 2;
+        }
+
+        .btn {
+            padding: 12px 18px;
+            border-radius: 20px;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: 0.3s;
+            animation: textFlow 20s infinite linear;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px white;
+        }
+
+        /* ✨ ACTIVE BUTTON */
+        .btn.active {
+            transform: scale(1.15);
+            box-shadow: 0 0 25px #ffffff, 0 0 40px #a855f7;
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Breathing Circle */
+        .circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-top: 20px;
+            animation: breathe 4s infinite ease-in-out;
+            box-shadow: 0 0 40px white;
+            z-index: 2;
+        }
+
+        @keyframes breathe {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+
+        /* 🌫️ Fog */
+        .fog {
+            position: absolute;
+            opacity: 0;
+            font-size: 22px;
+            white-space: nowrap;
+
+            color: #fff8dc;
+            text-shadow:
+                0 0 6px #fff8dc,
+                0 0 12px #ffd700,
+                0 0 20px #a855f7;
+
+            animation: fogFade 14s ease-in-out forwards,
+                       floatFog 14s linear forwards;
+        }
+
+        @keyframes fogFade {
+            0% { opacity: 0; transform: scale(0.9); }
+            20% { opacity: 0.5; }
+            50% { opacity: 0.4; }
+            80% { opacity: 0.5; }
+            100% { opacity: 0; transform: scale(1.05); }
+        }
+
+        @keyframes floatFog {
+            0% { transform: translateY(30px); }
+            100% { transform: translateY(-250px); }
+        }
+
+        .help {
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.7;
+            text-align: center;
+            z-index: 2;
+            animation: textFlow 20s infinite linear;
+        }
+    </style>
+</head>
+
+<body>
+
+<canvas id="stars"></canvas>
+
+<h1>🌙 CalmSpace</h1>
+
+<div class="panel">
+    <button class="btn" onclick="setMood('storm', this)">🌧️ Thunderstorm</button>
+    <button class="btn" onclick="setMood('forest', this)">🌲 Forest Calm</button>
+    <button class="btn" onclick="setMood('space', this)">🌌 Deep Space</button>
+</div>
+
+<button class="btn" onclick="stopSounds()">⏹ Stop</button>
+
+<div class="circle"></div>
+
+<div class="help">
+    <p>If you ever feel overwhelmed, you’re not alone.</p>
+    <p><strong>India:</strong> AASRA – +91 9820466726</p>
+</div>
+
+<!-- 🎵 AUDIO -->
+<audio id="storm" loop>
+    <source src="storm.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="forest" loop>
+    <source src="forest.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="space" loop>
+    <source src="space.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+let currentAudio = null;
+let currentButton = null;
+
+/* 🎧 STOP */
+function stopSounds() {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+    }
+
+    if (currentButton) {
+        currentButton.classList.remove("active");
+    }
+}
+
+/* 🌙 SET MOOD */
+function setMood(type, btn) {
+    stopSounds();
+
+    currentButton = btn;
+    currentButton.classList.add("active");
+
+    if(type === "storm"){
+        currentAudio = document.getElementById("storm");
+    }
+
+    if(type === "forest"){
+        currentAudio = document.getElementById("forest");
+    }
+
+    if(type === "space"){
+        currentAudio = document.getElementById("space");
+    }
+
+    if(currentAudio){
+        currentAudio.volume = 0.7;
+        currentAudio.load();
+
+        currentAudio.play().catch(err => {
+            console.log("Playback blocked:", err);
+        });
+    }
+}
+
+/* ⭐ Stars */
+const canvas=document.getElementById("stars");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;
+canvas.height=innerHeight;
+
+let stars=Array.from({length:120},()=>({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*2
+}));
+
+function drawStars(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle="white";
+    stars.forEach(s=>{
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+        ctx.fill();
+    });
+    requestAnimationFrame(drawStars);
+}
+drawStars();
+
+/* 🌫️ Fog Text */
+const words=[
+    "breathe slowly",
+    "you are safe",
+    "let go gently",
+    "everything will pass",
+    "stay present",
+    "soften your thoughts",
+    "you are enough",
+    "rest your mind",
+    "just be",
+    "this moment is yours"
+];
+
+function createFog(){
+    let f=document.createElement("span");
+    f.className="fog";
+    f.innerText=words[Math.floor(Math.random()*words.length)];
+
+    f.style.left=Math.random()*90+"vw";
+    f.style.top=(60+Math.random()*30)+"vh";
+    f.style.animationDuration=(12+Math.random()*6)+"s";
+
+    document.body.appendChild(f);
+
+    setTimeout(()=>f.remove(),14000);
+}
+
+setInterval(createFog,2500);
+</script>
+
+</body>
+</html>

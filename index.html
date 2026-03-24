@@ -138,9 +138,9 @@
 <h1>🌙 CalmSpace</h1>
 
 <div class="panel">
-    <button class="btn" onclick="setMood('storm', this)">🌧️ Thunderstorm</button>
-    <button class="btn" onclick="setMood('forest', this)">🌲 Forest Calm</button>
-    <button class="btn" onclick="setMood('space', this)">🌌 Deep Space</button>
+    <button class="btn" onclick="setMood('storm1', this)">🌧️ Thunderstorm</button>
+    <button class="btn" onclick="setMood('forest1', this)">🌲 Forest Calm</button>
+    <button class="btn" onclick="setMood('space1', this)">🌌 Deep Space</button>
 </div>
 
 <button class="btn" onclick="stopSounds()">⏹ Stop</button>
@@ -153,15 +153,15 @@
 </div>
 
 <!-- 🎵 AUDIO -->
-<audio id="storm" loop>
+<audio id="storm1" loop>
     <source src="storm" type="audio/mpeg">
 </audio>
 
-<audio id="forest" loop>
+<audio id="forest1" loop>
     <source src="forest" type="audio/mpeg">
 </audio>
 
-<audio id="space" loop>
+<audio id="space1" loop>
     <source src="space" type="audio/mpeg">
 </audio>
 
@@ -189,15 +189,15 @@ function setMood(type, btn) {
     currentButton.classList.add("active");
 
     if(type === "storm"){
-        currentAudio = document.getElementById("storm");
+        currentAudio = document.getElementById("storm1");
     }
 
     if(type === "forest"){
-        currentAudio = document.getElementById("forest");
+        currentAudio = document.getElementById("forest1");
     }
 
     if(type === "space"){
-        currentAudio = document.getElementById("space");
+        currentAudio = document.getElementById("space1");
     }
 
     if(currentAudio){
